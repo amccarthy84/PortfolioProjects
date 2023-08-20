@@ -1,5 +1,19 @@
+/*
+Covid 19 Data Exploration 
+
+Skills used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
+
+*/
+
 -- Select the data needed for analysis
 -- Continent is NULL in some cases where the location is only the continent
+
+SELECT *
+FROM CovidDeaths23
+WHERE continent is NOT NULL 
+ORDER BY 3,4
+
+-- Select the data that we are going to be starting with
 
 SELECT location, date, total_cases, new_cases, total_deaths, population
 FROM CovidDeaths23
@@ -16,6 +30,7 @@ ORDER BY 1,2
 SELECT location, date, total_cases, total_deaths, (total_deaths / total_cases)*100 as DeathPercentUS
 FROM CovidDeaths23
 WHERE location LIKE '%states%'
+AND continent is NOT NULL
 ORDER BY 1,2
 
 -- Total cases vs population
@@ -49,6 +64,7 @@ GROUP BY location
 ORDER BY TotalDeathCount DESC
 
 -- Breakdown by continent
+-- Showing contintents with the highest death count per population
 
 SELECT continent, MAX(total_deaths) AS TotalDeathCountContinent
 FROM CovidDeaths23
@@ -77,7 +93,7 @@ WHERE dea.continent is NOT NULL
 ORDER BY 2, 3 DESC
 
 
--- USE CTE
+-- Using CTEs to perform a calculation on Partition By in the previous query
 
 WITH PopVsVax (Continent, location, date, population, new_vaccinations, RollingPeopleVaccinated)
 AS
@@ -96,7 +112,7 @@ SELECT *, (RollingPeopleVaccinated/population) * 100
 FROM PopVsVax
 
 
--- TEMP TABLE
+-- Using Temp Table to perform a calculation on Partition By in the previous query
 
 DROP TABLE IF EXISTS #PercentPopulationVaccinated
 CREATE TABLE #PercentPopulationVaccinated
@@ -122,7 +138,7 @@ WHERE dea.continent is NOT NULL
 SELECT *, (RollingPeopleVaccinated/population) * 100
 FROM #PercentPopulationVaccinated
 
--- Creating view to store data for vizualizations
+-- Creating a view to store data for visualizations
 
 CREATE VIEW PercentPopulationVaccinated AS 
 SELECT dea.continent, dea.location, dea.date, dea.population, vax.new_vaccinations
