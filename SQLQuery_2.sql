@@ -1,5 +1,5 @@
 -- Select the data needed for analysis
--- Continent is NULL in some cases were the location is only the continent
+-- Continent is NULL in some cases where the location is only the continent
 
 SELECT location, date, total_cases, new_cases, total_deaths, population
 FROM CovidDeaths23
